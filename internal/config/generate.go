@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 )
@@ -20,8 +21,29 @@ var (
 		XdgFolder,
 		ConfigFileName)
 
+	// path the the parent folder
 	fullConfigFolderPath string = fmt.Sprintf("%s/%s", getUserConfigDirectory(),
 		XdgFolder)
+
+	// example config to use creating the initial file
+	exampleConfig config.Config = config.Config{
+		Name: "Example Config File Name",
+		Groups: []config.Group{
+			{
+				Name: "ExampleGroup",
+				Vars: []config.KeyValue{
+					{
+						Key:   "AnthropicAPIKey",
+						Value: "some-random-string",
+					},
+					{
+						Key:   "OpenAIApiKey",
+						Value: "some-random-string",
+					},
+				},
+			},
+		},
+	}
 )
 
 // Creates the cloak config file in the users XDG home
@@ -53,7 +75,7 @@ func createConfig() error {
 	var err error
 	err = createDefaultConfigDirectory()
 
-	content, err := json.MarshalIndent(&config.Config{}, "", "	")
+	content, err := json.MarshalIndent(&exampleConfig, "", "	")
 
 	err = os.WriteFile(fullConfigPath,
 		content,
@@ -73,11 +95,11 @@ func createConfig() error {
 func GenerateConfigFile(force bool, custom string) error {
 
 	switch checkConfigIfExists() {
-	// this would mean errors encountered finding config
-	case false:
+	case true:
+		log.Println("creating new config file")
 		return createConfig()
 
-	case true:
+	case false:
 		switch force {
 		case true:
 			return createConfig()
