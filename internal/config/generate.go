@@ -82,8 +82,7 @@ func createConfig() error {
 		0644)
 
 	if err != nil {
-		slog.Error("error encountered while creating config",
-			err)
+		slog.Error("error encountered while creating config")
 	}
 	return err
 }
