@@ -1,0 +1,60 @@
+# .goreleaser.yml
+builds:
+  - id: "linux-build"
+    dir: "."
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/DaviHoenisch/cloak/cmd.version={{ .Tag }}
+    env:
+      - CGO_ENABLED=0
+  - id: "macos-build"
+    dir: "."
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/DavidHoenisch/cloak/cmd.version={{ .Tag }}
+    env:
+      - CGO_ENABLED=0
+release:
+  # contain special words like alpha, beta, or rc
+  prerelease: auto
+  extra_files:
+    - glob: ./cosign.pub
+signs:
+  - cmd: cosign
+    stdin: "{{ .Env.COSIGN_PWD }}"
+    args:
+      - "sign-blob"
+      - "--key=cosign.key"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes" # needed on cosign 2.0.0+
+    artifacts: all
+brews:
+    - name: cloak
+      commit_author:
+        name: DavidHoenisch
+        email: dh1689@pm.me
+      commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+      directory: Formula
+      description: "protect environmental vars from untrusted applications"
+      license: "MIT"
+      install: |
+        bin.install "cloak"
+      test: |
+        system "#{bin}/cloak --version"
+      # Repository to push the generated files to.
+      repository:
+        owner: DavidHoenisch
+        name: homebrew-cloak
+        branch: main
+        token: "{{ .Env.GITHUB_TOKEN }}"
