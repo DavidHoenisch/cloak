@@ -10,10 +10,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version string
+func getDefaultConfigs() settings.Settings {
+	return *settings.New()
+}
+
+var version string = "no-build-version"
 var Settings settings.Settings
 
 var env string
+var conf string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -31,5 +36,6 @@ func Execute() {
 }
 
 func init() {
+	cobra.OnInitialize(func() { Settings = getDefaultConfigs() })
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

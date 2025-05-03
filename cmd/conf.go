@@ -36,5 +36,5 @@ var confCmd = &cobra.Command{
 func init() {
 
 	confCmd.Flags().BoolP("force", "f", false, "overwrite existing config")
-	confCmd.Flags().StringP("path", "p", "", "custom path to file")
+	confCmd.Flags().StringVarP(&conf, "path", "p", "", "custom path to file")
 }

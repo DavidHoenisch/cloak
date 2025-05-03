@@ -15,6 +15,12 @@ import (
 var listGroupsCmd = &cobra.Command{
 	Use:   "list-groups",
 	Short: "list all the environment groups defined in your cloak config",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Set the default value for the env flag after Settings is initialized
+		if !cmd.Flags().Changed("path") {
+			env = Settings.DefaultEnvPath
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		configPath := cmd.Flag("path").Value.String()
 
@@ -31,5 +37,5 @@ var listGroupsCmd = &cobra.Command{
 }
 
 func init() {
-	listGroupsCmd.Flags().StringP("path", "p", Settings.DefaultEnvPath, "custom path to file")
+	listGroupsCmd.Flags().StringVarP(&env, "path", "p", "", "custom path to file")
 }

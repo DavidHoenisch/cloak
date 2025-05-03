@@ -36,5 +36,5 @@ var envCmd = &cobra.Command{
 func init() {
 
 	envCmd.Flags().BoolP("force", "f", false, "overwrite existing config")
-	envCmd.Flags().StringP("path", "p", "", "custom path to file")
+	envCmd.Flags().StringVarP(&env, "path", "p", "", "custom path to file")
 }

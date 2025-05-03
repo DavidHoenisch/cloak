@@ -5,11 +5,11 @@ package cmd
 
 import (
 	"cloak/internal/execs"
+	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
 )
-
 
 // cmdCmd represents the cmd command
 var cmdCmd = &cobra.Command{
@@ -28,7 +28,7 @@ For best results, quote out the entire commend string`,
 		group := cmd.Flag("group").Value.String()
 		command := cmd.Flag("command").Value.String()
 
-		log.Println(env)
+		fmt.Println(env)
 
 		r := execs.Runner{}
 
