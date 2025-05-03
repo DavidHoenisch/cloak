@@ -21,6 +21,12 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Set the default value for the env flag after Settings is initialized
+		if !cmd.Flags().Changed("path") {
+			env = Settings.DefaultConfigPath
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		force := cmd.Flags().Changed("force")
 		customPath := cmd.Flag("path").Value.String()
@@ -37,5 +43,5 @@ func init() {
 	rootCmd.AddCommand(confCmd)
 
 	confCmd.Flags().BoolP("force", "f", false, "overwrite existing config")
-	confCmd.Flags().StringP("path", "p", Settings.DefaultConfigPath, "custom path to file")
+	confCmd.Flags().StringP("path", "p", "", "custom path to file")
 }
