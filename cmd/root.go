@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"cloak/internal/settings"
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -14,10 +13,7 @@ import (
 var version string
 var Settings settings.Settings
 
-func getDefaultConfigs() settings.Settings {
-	Sts := settings.New()
-	return *Sts
-}
+var env string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -35,9 +31,5 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(func() {
-		Settings = getDefaultConfigs()
-		fmt.Println("Initialized settings ", Settings)
-	})
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+Copyright © 2025 DavidHoenisch dh1689@pm.me
 */
 package cmd
 
@@ -14,13 +14,7 @@ import (
 // confCmd represents the conf command
 var confCmd = &cobra.Command{
 	Use:   "conf",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "create a new cloak config file ($HOME/.config/cloak/conf.json)",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// Set the default value for the env flag after Settings is initialized
 		if !cmd.Flags().Changed("path") {
@@ -40,7 +34,6 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(confCmd)
 
 	confCmd.Flags().BoolP("force", "f", false, "overwrite existing config")
 	confCmd.Flags().StringP("path", "p", "", "custom path to file")

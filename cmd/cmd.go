@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+Copyright © 2025 DavidHoenisch dh1689@pm.me
 */
 package cmd
 
@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var env string
 
 // cmdCmd represents the cmd command
 var cmdCmd = &cobra.Command{

@@ -31,9 +31,5 @@ var listGroupsCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(listGroupsCmd)
-
-	// listGroupsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
 	listGroupsCmd.Flags().StringP("path", "p", Settings.DefaultEnvPath, "custom path to file")
 }

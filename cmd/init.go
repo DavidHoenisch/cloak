@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+Copyright © 2025 DavidHoenisch dh1689@pm.me
 */
 package cmd
 
@@ -10,14 +10,10 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "initialize a new cloak config",
-	Run: func(cmd *cobra.Command, args []string) {
-	},
+	Short: "initialize a new cloak config or env",
 }
 
 func init() {
-	rootCmd.AddCommand(initCmd)
-
 	initCmd.AddCommand(envCmd)
 	initCmd.AddCommand(confCmd)
 }

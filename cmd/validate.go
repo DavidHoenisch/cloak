@@ -20,6 +20,4 @@ var validateCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(validateCmd)
-
-	// validateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

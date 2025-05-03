@@ -29,11 +29,11 @@ var (
 				Name: "ExampleGroup",
 				Vars: []env.KeyValue{
 					{
-						Key:   "AnthropicAPIKey",
+						Key:   "ANTHROPIC_API_KEY",
 						Value: "some-random-string",
 					},
 					{
-						Key:   "OpenAIApiKey",
+						Key:   "OPENAI_API_KEY",
 						Value: "some-random-string",
 					},
 				},
