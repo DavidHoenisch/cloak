@@ -1,37 +1,33 @@
 package config
 
 import (
+	"cloak/internal/settings"
 	"cloak/models/config"
+	"cloak/models/env"
+	"cloak/models/types"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"log"
 	"log/slog"
 	"os"
 )
 
 const (
-	XdgFolder      string = "cloak"
-	ConfigFileName string = "conf.json"
+	XdgFolder       string = "cloak"
+	EnvHiddenFolder string = ".cloak"
+	ConfigFileName  string = "conf.json"
+	envFileName     string = "env.json"
 )
 
+var Settings settings.Settings = *settings.New()
+
 var (
-	// full path to the default config
-	fullConfigPath string = fmt.Sprintf("%s/%s/%s", getUserConfigDirectory(),
-		XdgFolder,
-		ConfigFileName)
-
-	// path the the parent folder
-	fullConfigFolderPath string = fmt.Sprintf("%s/%s", getUserConfigDirectory(),
-		XdgFolder)
-
 	// example config to use creating the initial file
-	exampleConfig config.Config = config.Config{
+	exampleEnv env.Env = env.Env{
 		Name: "Example Config File Name",
-		Groups: []config.Group{
+		Groups: []env.Group{
 			{
 				Name: "ExampleGroup",
-				Vars: []config.KeyValue{
+				Vars: []env.KeyValue{
 					{
 						Key:   "AnthropicAPIKey",
 						Value: "some-random-string",
@@ -44,66 +40,99 @@ var (
 			},
 		},
 	}
+
+	exampleConfig config.Config = config.Config{
+		EnvPath: "some path to somewhere",
+	}
 )
 
 // Creates the cloak config file in the users XDG home
-func createDefaultConfigDirectory() error {
-	return os.Mkdir(fullConfigFolderPath, 0755)
+func createDefaultDirectory(t types.Ftype) error {
 
-}
-
-// Gets the XDG home values from the environmental vars
-func getUserConfigDirectory() string {
-	configHome, err := os.UserConfigDir()
-	if err != nil {
-		slog.Error("could not find user home dir")
+	switch t {
+	case types.Config:
+		return os.Mkdir(Settings.DefaultConfigParentPath, 0755)
+	case types.Env:
+		return os.Mkdir(Settings.DefaultEnvParentPath, 0755)
+	default:
+		return errors.New("error figuring out whether to create a config or env dir")
 	}
-
-	return configHome
 }
 
 // checkConfigIfExists() returns true if cannot find
 // config file. Returns false if no error encountered finding
 // config file
-func checkConfigIfExists() bool {
-	_, statErr := os.Stat(fullConfigPath)
+func checkConfigIfExists(t types.Ftype) bool {
 
-	return errors.Is(statErr, os.ErrExist)
+	switch t {
+	case types.Config:
+		_, statErr := os.Stat(Settings.DefaultConfigPath)
+
+		return errors.Is(statErr, os.ErrNotExist)
+	case types.Env:
+		_, statErr := os.Stat(Settings.DefaultEnvPath)
+
+		return errors.Is(statErr, os.ErrNotExist)
+	default:
+		return true
+	}
 }
 
-func createConfig() error {
-	var err error
-	err = createDefaultConfigDirectory()
+func createFile(t types.Ftype) error {
 
-	content, err := json.MarshalIndent(&exampleConfig, "", "	")
+	switch t {
+	case types.Config:
+		var err error
+		err = createDefaultDirectory(t)
 
-	err = os.WriteFile(fullConfigPath,
-		content,
-		0644)
+		content, err := json.MarshalIndent(&exampleConfig, "", "	")
 
-	if err != nil {
-		slog.Error("error encountered while creating config")
+		err = os.WriteFile(Settings.DefaultConfigPath,
+			content,
+			0644)
+
+		if err != nil {
+			slog.Error("error encountered while creating file")
+		}
+		return err
+
+	case types.Env:
+
+		var err error
+		err = createDefaultDirectory(t)
+
+		content, err := json.MarshalIndent(&exampleEnv, "", "	")
+
+		err = os.WriteFile(Settings.DefaultEnvPath,
+			content,
+			0644)
+
+		if err != nil {
+			slog.Error("error encountered while creating file")
+		}
+		return err
+
 	}
-	return err
+
+	return nil
 }
 
 // Generates config file if not exists
 //
 //	force: allows overwriting of existing config
 //	custom: custom path for the config file
-func GenerateConfigFile(force bool, custom string) error {
+func GenerateEnvFile(force bool, custom string, configOrEnv types.Ftype) error {
 
-	switch checkConfigIfExists() {
+	switch checkConfigIfExists(configOrEnv) {
 	case true:
-		log.Println("creating new config file")
-		return createConfig()
+		return createFile(configOrEnv)
 
 	case false:
 		switch force {
 		case true:
-			return createConfig()
+			return createFile(configOrEnv)
 		case false:
-			return errors.New("config file already exist. Use --force if you intent to overwrite")
+			return errors.New("file already exist. Use --force if you intent to overwrite")
 		default:
 			return nil
 		}

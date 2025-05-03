@@ -6,6 +6,8 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+
+	"cloak/internal/config"
 )
 
 type CommandParts struct {
@@ -37,17 +39,37 @@ func (r *Runner) parseCommandString(command string) *CommandParts {
 	}
 }
 
-func (r *Runner) getGroupEnvVars(group string) []string {
-	return []string{}
+func (r *Runner) getGroupEnvVars(group, envPath string) []string {
+
+	var vars []string
+
+	grps, err := config.ParseInConfigFile(envPath)
+	if err != nil {
+		return nil
+	}
+
+	groups := grps.Groups
+
+	for _, v := range groups {
+		if v.Name == group {
+			for _, vv := range v.Vars {
+				readyVar := fmt.Sprintf("%s=%s", vv.Key, vv.Value)
+				vars = append(vars, readyVar)
+
+			}
+		}
+	}
+
+	return vars
 }
 
-func (r *Runner) ExecCommandInNewProcess(c string, group string) error {
+func (r *Runner) ExecCommandInNewProcess(c, group, envPath string) error {
 	ctx := context.TODO()
 
 	command := r.parseCommandString(c)
 	cmd := exec.CommandContext(ctx, command.Command, command.Args...)
 
-	for _, v := range r.getGroupEnvVars("") {
+	for _, v := range r.getGroupEnvVars(group, envPath) {
 		cmd.Env = append(cmd.Environ(), v)
 	}
 

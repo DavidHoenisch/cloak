@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var env string
+
 // cmdCmd represents the cmd command
 var cmdCmd = &cobra.Command{
 	Use:   "cmd",
@@ -17,13 +19,21 @@ var cmdCmd = &cobra.Command{
 	Long: `Run a command with cloaked environmental vars.
 
 For best results, quote out the entire commend string`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Set the default value for the env flag after Settings is initialized
+		if !cmd.Flags().Changed("env") {
+			env = Settings.DefaultEnvPath
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		group := cmd.Flag("group").Value.String()
 		command := cmd.Flag("command").Value.String()
 
+		log.Println(env)
+
 		r := execs.Runner{}
 
-		err := r.ExecCommandInNewProcess(command, group)
+		err := r.ExecCommandInNewProcess(command, group, env)
 
 		if err != nil {
 			log.Println(err)
@@ -37,6 +47,7 @@ func init() {
 
 	cmdCmd.Flags().StringP("command", "c", "", "command to run")
 	cmdCmd.Flags().StringP("group", "g", "", "group environment to inject")
+	cmdCmd.Flags().StringVarP(&env, "env", "e", "", "path to env file. Leave blank for default")
 
 	// mark command and group as required args
 	cmdCmd.MarkFlagRequired("command")

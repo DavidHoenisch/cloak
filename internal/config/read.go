@@ -1,14 +1,14 @@
 package config
 
 import (
-	"cloak/models/config"
+	"cloak/models/env"
 	"encoding/json"
 	"log"
 	"os"
 )
 
-func readOutFileAsBytes() []byte {
-	d, err := os.ReadFile(fullConfigPath)
+func readOutFileAsBytes(path string) []byte {
+	d, err := os.ReadFile(path)
 	if err != nil {
 		log.Println(err)
 	}
@@ -18,9 +18,9 @@ func readOutFileAsBytes() []byte {
 
 // parses config file, if errors are encountered during unmarshalling
 // and error is returned
-func ParseInConfigFile(configPath string) (*config.Config, error) {
+func ParseInConfigFile(configPath string) (*env.Env, error) {
 
-	var conf config.Config
-	return &conf, json.Unmarshal(readOutFileAsBytes(), &conf)
+	var conf env.Env
+	return &conf, json.Unmarshal(readOutFileAsBytes(configPath), &conf)
 
 }
