@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"cloak/internal/config"
+	"github.com/DavidHoenisch/cloak/internal/config"
 )
 
 type CommandParts struct {

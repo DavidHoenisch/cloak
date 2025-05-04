@@ -4,7 +4,7 @@ Copyright © 2025 DavidHoenisch
 */
 package main
 
-import "cloak/cmd"
+import "github.com/DavidHoenisch/cloak/cmd"
 
 func main() {
 	cmd.Execute()

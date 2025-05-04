@@ -4,7 +4,7 @@ Copyright © 2025 DavidHoenisch dh1689@pm.me
 package cmd
 
 import (
-	"cloak/internal/execs"
+	"github.com/DavidHoenisch/cloak/internal/execs"
 	"fmt"
 	"log"
 

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"cloak/models/env"
+	"github.com/DavidHoenisch/cloak/models/env"
 	"encoding/json"
 	"log"
 	"os"

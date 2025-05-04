@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"cloak/internal/config"
+	"github.com/DavidHoenisch/cloak/internal/config"
 )
 
 func GetVarGroups(configPath string) ([]string, error) {

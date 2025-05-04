@@ -1,10 +1,10 @@
 package config
 
 import (
-	"cloak/internal/settings"
-	"cloak/models/config"
-	"cloak/models/env"
-	"cloak/models/types"
+	"github.com/DavidHoenisch/cloak/internal/settings"
+	"github.com/DavidHoenisch/cloak/models/config"
+	"github.com/DavidHoenisch/cloak/models/env"
+	"github.com/DavidHoenisch/cloak/models/types"
 	"encoding/json"
 	"errors"
 	"log/slog"

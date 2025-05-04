@@ -1,4 +1,4 @@
-module cloak
+module github.com/DavidHoenisch/cloak
 
 go 1.24.2
 

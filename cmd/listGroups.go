@@ -4,7 +4,7 @@ Copyright © 2025 DavidHoenisch dh1689@pm.me
 package cmd
 
 import (
-	"cloak/utils"
+	"github.com/DavidHoenisch/cloak/utils"
 	"fmt"
 	"log"
 

@@ -4,8 +4,8 @@ Copyright © 2025 DavidHoenisch dh1689@pm.me
 package cmd
 
 import (
-	"cloak/internal/config"
-	"cloak/models/types"
+	"github.com/DavidHoenisch/cloak/internal/config"
+	"github.com/DavidHoenisch/cloak/models/types"
 	"log"
 
 	"github.com/spf13/cobra"
