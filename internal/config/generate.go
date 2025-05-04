@@ -23,7 +23,7 @@ var Settings settings.Settings = *settings.New()
 var (
 	// example config to use creating the initial file
 	exampleEnv env.Env = env.Env{
-		Name: "Example Config File Name",
+		Name: "EnvFileName",
 		Groups: []env.Group{
 			{
 				Name: "ExampleGroup",
@@ -67,12 +67,18 @@ func checkConfigIfExists(t types.Ftype) bool {
 	switch t {
 	case types.Config:
 		_, statErr := os.Stat(Settings.DefaultConfigPath)
-
-		return errors.Is(statErr, os.ErrNotExist)
+		if os.IsNotExist(statErr) {
+			return false
+		} else {
+			return true
+		}
 	case types.Env:
 		_, statErr := os.Stat(Settings.DefaultEnvPath)
-
-		return errors.Is(statErr, os.ErrNotExist)
+		if os.IsNotExist(statErr) {
+			return false
+		} else {
+			return true
+		}
 	default:
 		return true
 	}
@@ -121,13 +127,13 @@ func createFile(t types.Ftype) error {
 //
 //	force: allows overwriting of existing config
 //	custom: custom path for the config file
-func GenerateEnvFile(force bool, custom string, configOrEnv types.Ftype) error {
+func GenerateFile(force bool, custom string, configOrEnv types.Ftype) error {
 
 	switch checkConfigIfExists(configOrEnv) {
-	case true:
+	case false:
 		return createFile(configOrEnv)
 
-	case false:
+	case true:
 		switch force {
 		case true:
 			return createFile(configOrEnv)

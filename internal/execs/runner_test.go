@@ -115,8 +115,8 @@ func TestRunner_getGroupEnvVars(t *testing.T) {
 				envPath: fmt.Sprintf("%s/.cloak/env.json", getHome()),
 			},
 			want: []string{
-				"AnthropicAPIKey=some-random-string",
-				"OpenAIApiKey=some-random-string",
+				"ANTHROPIC_API_KEY=some-random-string",
+				"OPENAI_API_KEY=some-random-string",
 			},
 		},
 	}

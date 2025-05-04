@@ -25,7 +25,7 @@ var envCmd = &cobra.Command{
 		force := cmd.Flags().Changed("force")
 		customPath := cmd.Flag("path").Value.String()
 
-		err := config.GenerateEnvFile(force, customPath, types.Config)
+		err := config.GenerateFile(force, customPath, types.Env)
 		if err != nil {
 			log.Println(err)
 		}

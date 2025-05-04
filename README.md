@@ -111,7 +111,7 @@ cloak config validate
 ### 4. Run a CLI Tool with a Group
 Run a tool with a specific group’s env vars (not fully implemented yet, but here’s the vision):
 ```bash
-cloak aws-prod aws-cli s3 ls
+cloak cmd --group aws-prod --command "aws-cli s3 ls"
 ```
 This sets `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (from the `aws-prod` group) only for `aws-cli s3 ls`.
 
@@ -125,7 +125,7 @@ initialization, group listing, and validation. Upcoming features:
 
 ## 🤝 Contributing
 
-We’d love your help making **Cloak** even better! 🙌
+I would love your help making **Cloak** even better! 🙌
 - Fork the repo and submit a PR.
 - Report issues or suggest features on GitHub.
 - Check out the code in `main.go` and the `cmd/` package for a peek under the hood! 👀

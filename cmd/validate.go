@@ -14,7 +14,7 @@ var validateCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "validate the cloak config file",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("validate called")
+		fmt.Println("not implmented yet")
 	},
 }
 
