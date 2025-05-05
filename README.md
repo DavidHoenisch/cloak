@@ -26,7 +26,7 @@ environment variables into a segmented process where your app will run 🕶️
 * As of the current version, cloak will run all commands in a `/bin/bash` sub-shell. The next
 release will allow users to configure custom shells and shell locataions.
 * When access env vars in a command passed to the sub-shell, be sure to escape it. For example,
-$CLOUDFLARE_API_KEY would become \$CLOUDFLARE_API_KEY. This is to prevent the parent-shell from
+$CLOUDFLARE_API_KEY would become \\$CLOUDFLARE_API_KEY. This is to prevent the parent-shell from
 expanding the variable before passing to to cloak.
 ___
 
