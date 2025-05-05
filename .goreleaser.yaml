@@ -9,7 +9,7 @@ builds:
       - arm64
     ldflags:
       - -s -w
-      - -X github.com/DaviHoenisch/cloak/cmd.Version={{ .Tag }}
+      - -X github.com/DavidHoenisch/cloak/cmd.Version={{ .Tag }}
     env:
       - CGO_ENABLED=0
   - id: "macos-build"

@@ -66,8 +66,9 @@ func (r *Runner) getGroupEnvVars(group, envPath string) []string {
 func (r *Runner) ExecCommandInNewProcess(c, group, envPath string) error {
 	ctx := context.TODO()
 
-	command := r.parseCommandString(c)
-	cmd := exec.CommandContext(ctx, command.Command, command.Args...)
+	// command := r.parseCommandString(c)
+	// cmd := exec.CommandContext(ctx, command.Command, command.Args...)
+	cmd := exec.CommandContext(ctx, "/bin/bash", "-c", c)
 
 	for _, v := range r.getGroupEnvVars(group, envPath) {
 		cmd.Env = append(cmd.Environ(), v)
