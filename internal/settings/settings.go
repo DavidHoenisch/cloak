@@ -15,6 +15,9 @@ type Settings struct {
 	// defaults to $HOME/.config/cloak/conf.json
 	DefaultConfigPath       string
 	DefaultConfigParentPath string
+
+	// Shell related commands
+	SystemShell string
 }
 
 // folder and file names

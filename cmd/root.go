@@ -16,9 +16,11 @@ func getDefaultConfigs() settings.Settings {
 
 var Version string = "dev-build"
 
+// Global settings for the app
 var Settings settings.Settings
 
 var env string
+var shell string
 var conf string
 
 // rootCmd represents the base command when called without any subcommands

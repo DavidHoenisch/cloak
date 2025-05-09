@@ -4,8 +4,8 @@ Copyright © 2025 DavidHoenisch dh1689@pm.me
 package cmd
 
 import (
-	"github.com/DavidHoenisch/cloak/internal/execs"
 	"fmt"
+	"github.com/DavidHoenisch/cloak/internal/execs"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -23,6 +23,12 @@ For best results, quote out the entire commend string`,
 		if !cmd.Flags().Changed("env") {
 			env = Settings.DefaultEnvPath
 		}
+
+		if !cmd.Flags().Changed("shell") {
+			shell = Settings.SystemShell
+		} else {
+			shell = "/bin/sh"
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		group := cmd.Flag("group").Value.String()
@@ -32,7 +38,7 @@ For best results, quote out the entire commend string`,
 
 		r := execs.Runner{}
 
-		err := r.ExecCommandInNewProcess(command, group, env)
+		err := r.ExecCommandInNewProcess(command, group, env, shell)
 
 		if err != nil {
 			log.Println(err)
@@ -47,6 +53,7 @@ func init() {
 	cmdCmd.Flags().StringP("command", "c", "", "command to run")
 	cmdCmd.Flags().StringP("group", "g", "", "group environment to inject")
 	cmdCmd.Flags().StringVarP(&env, "env", "e", "", "path to env file. Leave blank for default")
+	cmdCmd.Flags().StringVarP(&shell, "shell", "s", "", "shell to run the command in")
 
 	// mark command and group as required args
 	cmdCmd.MarkFlagRequired("command")

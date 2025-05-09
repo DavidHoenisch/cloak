@@ -73,6 +73,7 @@ func TestRunner_ExecCommandInNewProcess(t *testing.T) {
 		name    string
 		r       *Runner
 		args    args
+		shell   string
 		wantErr bool
 		envPath string
 	}{
@@ -83,14 +84,15 @@ func TestRunner_ExecCommandInNewProcess(t *testing.T) {
 				group: "",
 			},
 			wantErr: false,
-			envPath: "",
+			envPath: "./test_env.json",
+			shell:   "/bin/bash",
 		},
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Runner{}
-			if err := r.ExecCommandInNewProcess(tt.args.c, tt.args.group, tt.envPath); (err != nil) != tt.wantErr {
+			if err := r.ExecCommandInNewProcess(tt.args.c, tt.args.group, tt.envPath, tt.shell); (err != nil) != tt.wantErr {
 				t.Errorf("Runner.ExecCommandInNewProcess() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
