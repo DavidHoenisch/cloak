@@ -46,6 +46,15 @@ func Test_splitCommandOnSpace(t *testing.T) {
 			want1:   []string{"-la"},
 			wantErr: false,
 		},
+		{
+			name: "attempt command split with '' command provided",
+			args: args{
+				cmd: "",
+			},
+			want:    "",
+			want1:   nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -87,7 +96,16 @@ func TestRunner_ExecCommandInNewProcess(t *testing.T) {
 			envPath: "./test_env.json",
 			shell:   "/bin/bash",
 		},
-		// TODO: Add test cases.
+		{
+			name: "Run command with expected error",
+			args: args{
+				c:     "ls -la",
+				group: "",
+			},
+			wantErr: true,
+			envPath: "./test_env.json",
+			shell:   "/bin/fish",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,6 +145,44 @@ func TestRunner_getGroupEnvVars(t *testing.T) {
 			r := &Runner{}
 			if got := r.getGroupEnvVars(tt.args.group, tt.args.envPath); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Runner.getGroupEnvVars() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRunner_parseCommandString(t *testing.T) {
+	type args struct {
+		command string
+	}
+	tests := []struct {
+		name string
+		r    *Runner
+		args args
+		want *CommandParts
+	}{
+		{
+			name: "test get nil *CommandParts struct",
+			args: args{
+				command: "",
+			},
+			want: nil,
+		},
+		{
+			name: "test get nil *CommandParts struct",
+			args: args{
+				command: "ls -la",
+			},
+			want: &CommandParts{
+				Command: "ls",
+				Args: []string{"-la"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := &Runner{}
+			if got := r.parseCommandString(tt.args.command); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Runner.parseCommandString() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -1,0 +1,19 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+  PROJECT_CODE: cloak
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+  test-prep:
+    cmds:
+      - podman build . -t "{{.PROJECT_CODE}}"
+  test:
+    cmds:
+      - podman run --user cloak -it cloak /bin/sh -c "cd /home/cloak/cloak && go test ./... -cover"

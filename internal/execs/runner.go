@@ -2,6 +2,7 @@ package execs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os/exec"
@@ -64,6 +65,7 @@ func (r *Runner) getGroupEnvVars(group, envPath string) []string {
 }
 
 func (r *Runner) ExecCommandInNewProcess(c, group, envPath, shell string) error {
+	// NOTE: The context may need to be passed in from elsewhere
 	ctx := context.TODO()
 
 	// command := r.parseCommandString(c)
@@ -77,6 +79,7 @@ func (r *Runner) ExecCommandInNewProcess(c, group, envPath, shell string) error 
 	out, err := cmd.Output()
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 
 	fmt.Println(string(out))
@@ -90,6 +93,11 @@ func (r *Runner) ExecCommandInNewProcess(c, group, envPath, shell string) error 
 func splitCommandOnSpace(cmd string) (string, []string, error) {
 	var command string
 	var args []string
+
+	// check if command is blank
+	if cmd == "" {
+		return "", nil, errors.New("blank command provided")
+	}
 
 	pCommand := strings.Split(cmd, " ")
 	if len(pCommand) >= 1 {
