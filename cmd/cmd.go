@@ -25,9 +25,9 @@ For best results, quote out the entire commend string`,
 		}
 
 		if !cmd.Flags().Changed("shell") {
-			shell = Settings.SystemShell
-		} else {
 			shell = "/bin/sh"
+		} else {
+			shell = cmd.Flag("shell").Value.String()
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

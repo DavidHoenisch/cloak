@@ -28,7 +28,6 @@ var rootCmd = &cobra.Command{
 	Version: Version,
 	Use:     "cloak",
 	Short:   "segment environmental vars into groups and only expose to cli apps explicity",
-	Long:    ``,
 }
 
 func Execute() {
