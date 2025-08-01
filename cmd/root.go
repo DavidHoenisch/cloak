@@ -4,8 +4,9 @@ Copyright © 2025 DavidHoenisch dh1689@pm.me
 package cmd
 
 import (
-	"github.com/DavidHoenisch/cloak/internal/settings"
 	"os"
+
+	"github.com/DavidHoenisch/cloak/internal/settings"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +28,7 @@ var conf string
 var rootCmd = &cobra.Command{
 	Version: Version,
 	Use:     "cloak",
-	Short:   "segment environmental vars into groups and only expose to cli apps explicity",
+	Short:   "segment environmental vars into groups and only expose to apps explicity",
 }
 
 func Execute() {
