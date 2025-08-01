@@ -58,3 +58,30 @@ brews:
         name: homebrew-cloak
         branch: main
         token: "{{ .Env.GITHUB_TOKEN }}"
+aurs:
+    - name: cloak-bin
+      ids:
+        - linux-build
+      homepage: "https://github.com/DavidHoenisch/cloak"
+      description: "Securely inject environment variables into trusted subprocesses"
+      maintainers:
+        - "David Hoenisch <dh1689@pm.me>"
+      license: "MIT"
+      private_key: "{{ .Env.AUR_KEY }}"
+      git_url: "ssh://aur@aur.archlinux.org/cloak-bin.git"
+      provides:
+        - cloak
+      conflicts:
+        - cloak
+      package: |-
+        # bin
+        install -Dm755 "./cloak" "${pkgdir}/usr/bin/cloak"
+
+        # license
+        install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/cloak-bin/LICENSE"
+      commit_author:
+        name: DavidHoenisch
+        email: dh1689@pm.me
+      commit_msg_template: "Update cloak-bin to {{ .Tag }}"
+      goamd64: v1
+      disable: "{{ .IsSnapshot }}"
