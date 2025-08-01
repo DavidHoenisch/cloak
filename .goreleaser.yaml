@@ -84,4 +84,3 @@ aurs:
         email: dh1689@pm.me
       commit_msg_template: "Update cloak-bin to {{ .Tag }}"
       goamd64: v1
-      disable: "{{ .IsSnapshot }}"
