@@ -24,6 +24,15 @@ builds:
       - -X github.com/DavidHoenisch/cloak/cmd.Version={{ .Tag }}
     env:
       - CGO_ENABLED=0
+archives:
+  - id: linux-archive
+    builds:
+      - linux-build
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format: tar.gz
+    files:
+      - LICENSE
+      - README.md
 release:
   # contain special words like alpha, beta, or rc
   prerelease: auto
@@ -61,7 +70,7 @@ brews:
 aurs:
     - name: cloak-bin
       ids:
-        - linux-build
+        - linux-archive
       homepage: "https://github.com/DavidHoenisch/cloak"
       description: "Securely inject environment variables into trusted subprocesses"
       maintainers:
