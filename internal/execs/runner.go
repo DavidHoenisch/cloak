@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"regexp"
 	"strings"
 
 	"github.com/DavidHoenisch/cloak/internal/config"
@@ -64,16 +65,61 @@ func (r *Runner) getGroupEnvVars(group, envPath string) []string {
 	return vars
 }
 
+// substituteEnvVars replaces $VAR and ${VAR} patterns in the command string
+// with actual values from the provided environment variables
+func (r *Runner) substituteEnvVars(command string, envVars []string) string {
+	// Create a map of environment variables for quick lookup
+	envMap := make(map[string]string)
+	for _, env := range envVars {
+		parts := strings.SplitN(env, "=", 2)
+		if len(parts) == 2 {
+			envMap[parts[0]] = parts[1]
+		}
+	}
+
+	// Regular expression to match $VAR or ${VAR} patterns
+	re := regexp.MustCompile(`\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)`)
+
+	result := re.ReplaceAllStringFunc(command, func(match string) string {
+		var varName string
+		if strings.HasPrefix(match, "${") {
+			// Handle ${VAR} format
+			varName = match[2 : len(match)-1]
+		} else {
+			// Handle $VAR format
+			varName = match[1:]
+		}
+
+		if value, exists := envMap[varName]; exists {
+			return value
+		}
+		// If variable not found, return the original match
+		return match
+	})
+
+	return result
+}
+
 func (r *Runner) ExecCommandInNewProcess(c, group, envPath, shell string) error {
 	// NOTE: The context may need to be passed in from elsewhere
 	ctx := context.TODO()
 
+	// Get group environment variables
+	groupEnvVars := r.getGroupEnvVars(group, envPath)
+
+	// Substitute environment variables in the command string
+	substitutedCommand := r.substituteEnvVars(c, groupEnvVars)
+
 	// command := r.parseCommandString(c)
 	// cmd := exec.CommandContext(ctx, command.Command, command.Args...)
-	cmd := exec.CommandContext(ctx, shell, "-c", c)
+	cmd := exec.CommandContext(ctx, shell, "-c", substitutedCommand)
 
-	for _, v := range r.getGroupEnvVars(group, envPath) {
-		cmd.Env = append(cmd.Environ(), v)
+	// Start with the current environment
+	cmd.Env = cmd.Environ()
+
+	// Append all group environment variables
+	for _, v := range groupEnvVars {
+		cmd.Env = append(cmd.Env, v)
 	}
 
 	out, err := cmd.Output()

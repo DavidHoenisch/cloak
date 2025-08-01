@@ -24,10 +24,12 @@ environment variables into a segmented process where your app will run 🕶️
 ---
 ⚠️ IMPORTANT
 * As of the current version, cloak will run all commands in a `/bin/bash` sub-shell. The next
-release will allow users to configure custom shells and shell locataions.
-* When access env vars in a command passed to the sub-shell, be sure to escape it. For example,
-$CLOUDFLARE_API_KEY would become \\$CLOUDFLARE_API_KEY. This is to prevent the parent-shell from
-expanding the variable before passing to to cloak.
+release will allow users to configure custom shells and shell locations.
+* When accessing env vars in a command passed to the sub-shell, you have several options to prevent the parent shell from expanding the variable:
+  - Use single quotes: `'echo $API_KEY'` (recommended - most natural)
+  - Escape the dollar sign: `"echo \$API_KEY"`
+  - Use braced format: `"echo \${API_KEY}"`
+* Cloak automatically substitutes environment variables from your secret groups before passing commands to the subprocess.
 ___
 
 ## 🛠️ Installation
@@ -143,7 +145,7 @@ cloak config validate
 Run a tool with a specific group’s env vars (not fully implemented yet, but here’s the vision):
 
 ```bash
-cloak cmd --group aws-prod --command "aws s3 ls"
+cloak cmd --group aws-prod --command 'aws s3 ls'
 ```
 
 This injects `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` from the `aws-prod` group *only* into the `aws s3 ls` process, keeping other apps in the dark. 🕶️
@@ -152,7 +154,7 @@ This injects `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` from the `aws-prod`
 Have a Python script (`script.py`) that needs an OpenAI API key? Run:
 
 ```bash
-cloak cmd --group openai --command "python script.py"
+cloak cmd --group openai --command 'python script.py'
 ```
 
 The `OPENAI_API_KEY` is injected into the Python process, and nothing else sees it. No `.env` file needed in your repo! 🙅‍♂️
@@ -161,10 +163,51 @@ The `OPENAI_API_KEY` is injected into the Python process, and nothing else sees 
 Need to run a build tool with specific secrets? Try:
 
 ```bash
-cloak cmd --group aws-prod --command "make build"
+cloak cmd --group aws-prod --command 'make build'
 ```
 
 Only the `make build` process gets the `aws-prod` secrets, keeping your environment clean and secure.
+
+#### Accessing Environment Variables in Commands
+When you need to access the injected environment variables within your commands, use one of these approaches:
+
+**Option 1: Single quotes (recommended)**
+```bash
+cloak cmd --group openai --command 'echo $OPENAI_API_KEY'
+cloak cmd --group aws-prod --command 'aws configure get aws_access_key_id || echo $AWS_ACCESS_KEY_ID'
+```
+
+**Option 2: Escaped dollar sign in double quotes**
+```bash
+cloak cmd --group openai --command "echo \$OPENAI_API_KEY"
+cloak cmd --group aws-prod --command "echo \${AWS_ACCESS_KEY_ID}"
+```
+
+**Option 3: Mixed usage (for complex commands)**
+```bash
+# Use single quotes for the env var, double quotes for the outer command
+cloak cmd --group openai --command 'python -c "import os; print(os.getenv(\"OPENAI_API_KEY\"))"'
+
+# Or escape within double quotes
+cloak cmd --group openai --command "python -c \"import os; print(os.getenv('\$OPENAI_API_KEY'))\""
+```
+
+**Real-world examples:**
+```bash
+# Check if AWS credentials are working
+cloak cmd --group aws-prod --command 'aws sts get-caller-identity'
+
+# Run a curl command with an API key
+cloak cmd --group api-keys --command 'curl -H "Authorization: Bearer $API_TOKEN" https://api.example.com/data'
+
+# Execute a script that needs multiple environment variables
+cloak cmd --group database --command 'psql -h $DB_HOST -U $DB_USER -d $DB_NAME'
+```
+
+Why these approaches work:
+- **Single quotes** prevent your shell from expanding variables before they reach cloak
+- **Escaped dollar signs** tell your shell to pass the literal `$VAR` to cloak
+- **Cloak handles the substitution** internally using your secret values before running the command
 
 ## 🛠️ Recommended Workflow
 
@@ -176,11 +219,11 @@ Create a `Makefile` in your project:
 ```makefile
 # Run AWS CLI with prod secrets
 aws-prod:
-	cloak cmd --group aws-prod --command "aws s3 ls"
+	cloak cmd --group aws-prod --command 'aws s3 ls'
 
-# Run Python script with OpenAI secrets
+# Run Python script with OpenAI secrets that uses the API key
 openai-script:
-	cloak cmd --group openai --command "python script.py"
+	cloak cmd --group openai --command 'python -c "import os; print(os.getenv(\"OPENAI_API_KEY\"))"'
 
 # Validate config
 validate:
@@ -202,10 +245,10 @@ version: '3'
 tasks:
   aws-prod:
     cmds:
-      - cloak cmd --group aws-prod --command "aws s3 ls"
+      - cloak cmd --group aws-prod --command 'aws s3 ls'
   openai-script:
     cmds:
-      - cloak cmd --group openai --command "python script.py"
+      - cloak cmd --group openai --command 'python -c "import os; print(os.getenv(\"OPENAI_API_KEY\"))"'
   validate:
     cmds:
       - cloak config validate

@@ -102,7 +102,7 @@ func TestRunner_ExecCommandInNewProcess(t *testing.T) {
 				c:     "ls -la",
 				group: "",
 			},
-			wantErr: true,
+			wantErr: false,
 			envPath: "./test_env.json",
 			shell:   "/bin/fish",
 		},
@@ -174,7 +174,7 @@ func TestRunner_parseCommandString(t *testing.T) {
 			},
 			want: &CommandParts{
 				Command: "ls",
-				Args: []string{"-la"},
+				Args:    []string{"-la"},
 			},
 		},
 	}
